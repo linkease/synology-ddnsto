@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# ddnsto package made by xiaobao
+# package maintained at http://www.ddnsto.com
+
+PKGNAME="ddnsto"
+PKGPATH="/var/packages/${PKGNAME}"
+
+BINPKG=`ls -l ${PKGPATH}/target | awk -F "-> " '{print $2}'`
+
+BINPATH="bin"
+BINFILE="ddnsto"
+
+BINSTART=${BINPKG}/${BINPATH}/${BINFILE}
+
+case $1 in
+	start)
+		echo "Starting ddnsto ...${wizard_ddnsto_token}${wizard_ddnsto_idx}" >> /tmp/ddnsto.log
+		${BINSTART} -d
+		exit 0
+	;;
+	stop)
+		echo "Stopping ddnsto ..."
+		killall ${BINFILE}
+		exit 0
+	;;
+	status)
+		pidof ${BINFILE} > /dev/null
+		if [ $? -ne 0 ]; then
+			echo "Status: ddnsto is not running"
+			exit 1
+		fi
+		echo "Status: ddnsto is running"
+		exit 0
+	;;
+    log)
+        echo ${BINPKG}/${BINPATH}/${BINLOG}
+    ;;
+esac

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+PKGNAME="ddnsto"
+PKGPATH="/var/packages/${PKGNAME}"
+
+BINPKG=`ls -l ${PKGPATH}/target | awk -F "-> " '{print $2}'`
+
+eval $(env | grep "^SYNOPKG_PKGDEST=")
+chown -R admin.users "$SYNOPKG_PKGDEST"
+ln -s "${SYNOPKG_PKGDEST}/web" /usr/syno/synoman/webman/3rdparty/ddnsto
+chown -R admin.users $SYNOPKG_PKGDEST
+cat >$BINPKG/bin/ddnsto-config.json<<EOF
+{"token":"${wizard_ddnsto_token}","routeridx":${wizard_ddnsto_idx}}
+EOF
+cat >$BINPKG/bin/.ddnsto_boot.cfg<<EOF
+0
+EOF
+exit 0 

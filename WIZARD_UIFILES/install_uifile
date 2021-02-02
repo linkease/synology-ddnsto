@@ -1,0 +1,37 @@
+[
+	{
+		"step_title": "Ddnsto 配置",
+		"items": [
+			{
+				"type": "textfield",
+				"desc": "如果你没有Token，你需要先到 https://www.ddnsto.com 注册。",
+				"subitems": [
+					{
+						"key": "wizard_ddnsto_token",
+						"desc": "Token 设置",
+						"defaultValue": "",
+            "validator": {
+              "allowBlank": false
+            }
+					}
+				]
+			},
+			{
+				"type": "textfield",
+				"desc": "设备冲突编号，不懂别填写 (e.g. 0)",
+				"subitems": [
+					{
+						"key": "wizard_ddnsto_idx",
+						"desc": "设备编号",
+						"defaultValue": "0",
+            "validator": {
+                "allowBlank": false,
+                "minLength": 0,
+                "maxLength": 99
+            }
+					}
+				]
+			}
+		]
+	}
+]

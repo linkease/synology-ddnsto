@@ -1,0 +1,12 @@
+{
+    ".url": {
+        "com.App.ddnsto": {
+            "title": "Ddnsto",
+            "desc": "Ddnsto 控制台",
+            "type": "url",
+            "icon": "images/icon_{0}.png",
+            "url": "https://www.ddnsto.com",
+            "allUsers": true
+        }
+    }
+}
