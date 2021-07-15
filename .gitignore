@@ -1,9 +1,8 @@
 package/bin/ddnsto
 INFO
 package.tgz
-ddnsto_arm.spk
-ddnsto_x86.spk
-ddnsto_arm-6.0.spk
-ddnsto_arm-7.0.spk
-ddnsto_x86-6.0.spk
-ddnsto_x86-7.0.spk
+ddnsto_arm-dsm6.spk
+ddnsto_arm-dsm7.spk
+ddnsto_x86-dsm6.spk
+ddnsto_x86-dsm7.spk
+
