@@ -1,4 +1,7 @@
 {
+    "defaults": {
+        "run-as": "package"
+    },
     ".url": {
         "com.App.ddnsto": {
             "title": "Ddnsto",
