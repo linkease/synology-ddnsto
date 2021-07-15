@@ -5,16 +5,17 @@ BUILDDIR=$(cd `dirname $0`;pwd)
 # export ARM_BIN=xxx
 
 VAR=$1
+INFO_VER=$2
 ARCH=
 case "$VAR" in
     *_x86)
         ARCH=x86
-        cp $BUILDDIR/x86/INFO $BUILDDIR/
+        cp $BUILDDIR/x86/INFO-${INFO_VER} $BUILDDIR/INFO
         cp $X86_BIN $BUILDDIR/package/bin/ddnsto
         ;;
     *_arm)
         ARCH=arm
-        cp $BUILDDIR/arm/INFO $BUILDDIR/
+        cp $BUILDDIR/arm/INFO-${INFO_VER} $BUILDDIR/INFO
         cp $ARM_BIN $BUILDDIR/package/bin/ddnsto
         ;;
     *)
@@ -36,4 +37,4 @@ tar -czf $BUILDDIR/package.tgz *
 
 echo "3.生成$1.SPK"
 cd $BUILDDIR
-tar -cf $BUILDDIR/$1.spk package.tgz scripts WIZARD_UIFILES CHANGELOG INFO LICENSE PACKAGE_ICON.PNG PACKAGE_ICON_256.PNG conf
+tar -cf $BUILDDIR/$1-$2.spk package.tgz scripts WIZARD_UIFILES CHANGELOG INFO LICENSE PACKAGE_ICON.PNG PACKAGE_ICON_256.PNG conf
