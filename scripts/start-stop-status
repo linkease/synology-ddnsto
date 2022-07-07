@@ -12,10 +12,11 @@ BINPATH="bin"
 BINFILE="ddnsto"
 
 BINSTART=${BINPKG}/${BINPATH}/${BINFILE}
+WHO=`whoami`
 
 case $1 in
   start)
-    echo "Starting ddnsto ...${wizard_ddnsto_token}${wizard_ddnsto_idx}" >> /tmp/ddnsto.log
+    echo "${WHO} Starting ddnsto ${BINSTART} ..." >> /tmp/ddnsto.log
     ${BINSTART} -d
     exit 0
   ;;

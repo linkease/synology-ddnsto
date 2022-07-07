@@ -15,4 +15,12 @@ EOF
 cat >$BINPKG/bin/.ddnsto_boot.cfg<<EOF
 0
 EOF
+rm -f /tmp/.ddnsto.pid
+rm -f /tmp/.ddnsto.status
+rm -f /tmp/.ddnsto.up
+if id ddnsto &>/dev/null; then
+  chmod 777 $BINPKG/bin/ddnsto-config.json
+  chmod 777 $BINPKG/bin/.ddnsto_boot.cfg
+fi
 exit 0 
+

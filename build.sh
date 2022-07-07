@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VER=0.3.3
+VER=3.0.0
 
 #export X86_BIN=/projects/gogs-ks/ddnsto-c/build-x86/ddnsto
 #export ARM_BIN=/projects/gogs-ks/ddnsto-c/build-arm/ddnsto
