@@ -17,7 +17,7 @@ WHO=`whoami`
 case $1 in
   start)
     echo "${WHO} Starting ddnsto ${BINSTART} ..." >> /tmp/ddnsto.log
-    ${BINSTART} -d
+		${BINSTART} >/tmp/ddnsto.log 2>&1 &
     exit 0
   ;;
   stop)

@@ -1,11 +1,11 @@
 #!/bin/sh
 
-VER=3.0.0
+DDNSTO_PATH=/projects/workspace-go/src/github.com/linkease/ddns-client/cmd/cli_ddnsto/release
+export X86_BIN=${DDNSTO_PATH}/synology.amd64
+export ARM_BIN=${DDNSTO_PATH}/synology.arm
 
-#export X86_BIN=/projects/gogs-ks/ddnsto-c/build-x86/ddnsto
-#export ARM_BIN=/projects/gogs-ks/ddnsto-c/build-arm/ddnsto
-export X86_BIN=/home/janson/Downloads/honor/ddnsto/ddnsto-binary-${VER}/ddnsto.x86_64
-export ARM_BIN=/home/janson/Downloads/honor/ddnsto/ddnsto-binary-${VER}/ddnsto.arm
+VER=`cat ${DDNSTO_PATH}/latest`
+echo "latest version is:" ${VER}
 
 sed -i "s/version=\".*\"/version=\"${VER}\"/g" arm/INFO-dsm6
 sed -i "s/version=\".*\"/version=\"${VER}\"/g" arm/INFO-dsm7
