@@ -1,6 +1,6 @@
 package="ddnsto"
 displayname="Ddnsto"
-version="3.0.2"
+version="3.0.5"
 description="Ddnsto 支持外网访问内网的网站，电脑桌面，文件存储。"
 maintainer="xiaobao"
 distributor="DDNSTO"

@@ -26,6 +26,7 @@ case $1 in
     rm -f /tmp/.ddnsto.pid
     rm -f /tmp/.ddnsto.status
     rm -f /tmp/.ddnsto.up
+    rm -f /tmp/ddnstoClient.lock
     exit 0
   ;;
   status)

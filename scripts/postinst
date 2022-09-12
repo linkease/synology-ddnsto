@@ -18,6 +18,7 @@ EOF
 rm -f /tmp/.ddnsto.pid
 rm -f /tmp/.ddnsto.status
 rm -f /tmp/.ddnsto.up
+rm -f /tmp/ddnstoClient.lock
 if id ddnsto &>/dev/null; then
   chmod 777 $BINPKG/bin/ddnsto-config.json
   chmod 777 $BINPKG/bin/.ddnsto_boot.cfg
