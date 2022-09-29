@@ -9,12 +9,34 @@ eval $(env | grep "^SYNOPKG_PKGDEST=")
 chown -R admin.users "$SYNOPKG_PKGDEST"
 ln -s "${SYNOPKG_PKGDEST}/web" /usr/syno/synoman/webman/3rdparty/ddnsto
 chown -R admin.users $SYNOPKG_PKGDEST
+
+if [ -z "${wizard_ddnsto_token}" ]; then
+  if [ -f /tmp/.ddnsto/ddnsto-config.json ]; then
+    cp /tmp/.ddnsto/ddnsto-config.json $BINPKG/bin/ddnsto-config.json 
+    rm -f /tmp/.ddnsto/ddnsto-config.json || true
+  fi
+fi
+
+if [ -z "${wizard_ddnsto_idx}" ]; then
+  wizard_ddnsto_idx=0
+fi
+
+if [ ! -f $BINPKG/bin/ddnsto-config.json ]; then
+
 cat >$BINPKG/bin/ddnsto-config.json<<EOF
 {"token":"${wizard_ddnsto_token}","routeridx":${wizard_ddnsto_idx}}
 EOF
+
+rm -f /tmp/.ddnsto/ddnsto-config.json || true
+
+fi
+
+if [ ! -f $BINPKG/bin/.ddnsto_boot.cfg ]; then
 cat >$BINPKG/bin/.ddnsto_boot.cfg<<EOF
 0
 EOF
+fi
+
 rm -f /tmp/.ddnsto.pid
 rm -f /tmp/.ddnsto.status
 rm -f /tmp/.ddnsto.up

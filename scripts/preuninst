@@ -1,4 +1,13 @@
 #!/bin/sh
 
+PKGNAME="ddnsto"
+PKGPATH="/var/packages/${PKGNAME}"
+
+BINPKG=`ls -l ${PKGPATH}/target | awk -F "-> " '{print $2}'`
+
+mkdir -p /tmp/.ddnsto
+if [ -f $BINPKG/bin/ddnsto-config.json ]; then 
+  cp $BINPKG/bin/ddnsto-config.json /tmp/.ddnsto/ddnsto-config.json
+fi
 
 exit 0
