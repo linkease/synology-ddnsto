@@ -1,4 +1,9 @@
-CHANGELOG
-=====
-Version: 0.2
-Changes made by xiaobao
+4.2.7-1
+--------
+- Package the Go DDNSTO 4.2.7 client for ARM and amd64, DSM 6 and DSM 7.
+- Parameterize input/output paths; reject missing binaries and mismatched architectures/hashes.
+- Build SPKs in isolated staging directories and emit SHA256 checksums and source manifests.
+- Keep package configuration and boot state in persistent private storage.
+- Use DSM-managed desktop integration and PID-scoped process supervision.
+- Correct numeric device-index loading in the client (nonzero legacy indices require migration testing).
+- Linux build validation completed; DSM device qualification is still required.

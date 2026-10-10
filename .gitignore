@@ -6,3 +6,6 @@ ddnsto_arm-dsm7.spk
 ddnsto_x86-dsm6.spk
 ddnsto_x86-dsm7.spk
 
+
+dist/
+__pycache__/

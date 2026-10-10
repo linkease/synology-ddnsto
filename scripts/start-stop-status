@@ -1,44 +1,56 @@
 #!/bin/sh
+set -eu
+umask 077
+TARGET=${SYNOPKG_PKGDEST:-/var/packages/ddnsto/target}
+DATA=${SYNOPKG_PKGVAR:-/var/packages/ddnsto/etc}
+BINARY=$(readlink -f "$TARGET/bin/ddnsto")
+PIDFILE="$DATA/ddnsto.pid"
+LOGFILE="$DATA/ddnsto.log"
 
-# ddnsto package made by xiaobao
-# package maintained at http://www.kooldns.cn
+running() {
+    [ -f "$PIDFILE" ] || return 1
+    PID=$(cat "$PIDFILE")
+    case "$PID" in ''|*[!0-9]*) return 1 ;; esac
+    [ "$PID" -gt 1 ] || return 1
+    kill -0 "$PID" 2>/dev/null || return 1
+    [ "$(readlink "/proc/$PID/exe" 2>/dev/null)" = "$BINARY" ]
+}
 
-PKGNAME="ddnsto"
-PKGPATH="/var/packages/${PKGNAME}"
-
-BINPKG=`ls -l ${PKGPATH}/target | awk -F "-> " '{print $2}'`
-
-BINPATH="bin"
-BINFILE="ddnsto"
-
-BINSTART=${BINPKG}/${BINPATH}/${BINFILE}
-WHO=`whoami`
-
-case $1 in
-  start)
-    echo "${WHO} Starting ddnsto ${BINSTART} ..." >> /tmp/ddnsto.log
-		${BINSTART} >/tmp/ddnsto.log 2>&1 &
-    exit 0
-  ;;
-  stop)
-    echo "Stopping ddnsto ..."
-    killall ${BINFILE}
-    rm -f /tmp/.ddnsto.pid
-    rm -f /tmp/.ddnsto.status
-    rm -f /tmp/.ddnsto.up
-    rm -f /tmp/ddnstoClient.lock
-    exit 0
-  ;;
-  status)
-    pidof ${BINFILE} > /dev/null
-    if [ $? -ne 0 ]; then
-      echo "Status: ddnsto is not running"
-      exit 1
-    fi
-    echo "Status: ddnsto is running"
-    exit 0
-  ;;
-    log)
-        echo ${BINPKG}/${BINPATH}/${BINLOG}
-    ;;
+case "${1:-}" in
+    start)
+        if running; then exit 0; fi
+        mkdir -p "$DATA"
+        chmod 700 "$DATA"
+        cd "$TARGET/bin"
+        "$BINARY" </dev/null >>"$LOGFILE" 2>&1 &
+        echo "$!" > "$PIDFILE"
+        sleep 1
+        if ! running; then
+            rm -f "$PIDFILE"
+            echo "DDNSTO failed to start; see $LOGFILE" >&2
+            exit 1
+        fi
+        ;;
+    stop)
+        if running; then
+            kill "$PID"
+            count=0
+            while running; do
+                count=$((count + 1))
+                if [ "$count" -ge 10 ]; then
+                    echo "DDNSTO did not stop" >&2
+                    exit 1
+                fi
+                sleep 1
+            done
+        fi
+        rm -f "$PIDFILE"
+        ;;
+    status)
+        if running; then exit 0; fi
+        exit 3
+        ;;
+    log) printf '%s\n' "$LOGFILE" ;;
+    prestart|prestop) exit 0 ;;
+    *) echo "Usage: $0 start|stop|status|log" >&2; exit 2 ;;
 esac

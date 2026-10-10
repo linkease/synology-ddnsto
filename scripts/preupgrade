@@ -1,3 +1,13 @@
 #!/bin/sh
-
-exit 0
+set -eu
+umask 077
+TARGET=${SYNOPKG_PKGDEST:-/var/packages/ddnsto/target}
+DATA=${SYNOPKG_PKGVAR:-/var/packages/ddnsto/etc}
+mkdir -p "$DATA"
+chmod 700 "$DATA"
+for name in ddnsto-config.json .ddnsto_boot.cfg; do
+    if [ ! -f "$DATA/$name" ] && [ -f "$TARGET/bin/$name" ]; then
+        cp "$TARGET/bin/$name" "$DATA/$name"
+        chmod 600 "$DATA/$name"
+    fi
+done
