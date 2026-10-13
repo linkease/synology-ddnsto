@@ -1,5 +1,13 @@
 {
     "defaults": {
         "run-as": "package"
-    }
+    },
+    "tool": [
+        {
+            "relpath": "web/settings.cgi",
+            "user": "package",
+            "group": "package",
+            "permission": "4755"
+        }
+    ]
 }

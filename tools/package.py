@@ -34,7 +34,7 @@ def main():
         parser.error("--package and --dsm must be supplied together")
     inputs = Path(os.environ.get("DDNSTO_PATH", ROOT.parent / "ddns-client/bin/cli_ddnsto/synology")).resolve()
     version = (inputs / "latest").read_text().strip()
-    revision = os.environ.get("PKG_REVISION", "1")
+    revision = os.environ.get("PKG_REVISION", "4")
     if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version) or not re.fullmatch(r"[1-9][0-9]*", revision):
         raise ValueError("Invalid version or PKG_REVISION")
     package_version = version + "-" + revision
@@ -64,6 +64,16 @@ def main():
     with tempfile.TemporaryDirectory(prefix=".build-", dir=output) as tmp:
         staging = Path(tmp)
         artifacts = []
+        helpers = {}
+        # Compile the authenticated settings CGI for the same CPU as the client.
+        # No Go/Python runtime or new network listener is needed on the NAS.
+        for arch in binaries:
+            helper = staging / ("settings-" + arch + ".cgi")
+            env = dict(os.environ, CGO_ENABLED="0", GOOS="linux",
+                       GOARCH="arm" if arch == "arm" else "amd64", GOARM="5")
+            subprocess.run(["go", "build", "-trimpath", "-ldflags=-s -w", "-o", str(helper), "."],
+                           cwd=ROOT / "settings", env=env, check=True)
+            helpers[arch] = helper
         for name, dsm in targets:
             arch = name.split("_")[-1]
             work = staging / (name + "-" + dsm)
@@ -73,6 +83,8 @@ def main():
             (payload / "bin").mkdir(exist_ok=True)
             shutil.copyfile(binaries[arch], payload / "bin/ddnsto")
             (payload / "bin/ddnsto").chmod(0o755)
+            shutil.copyfile(helpers[arch], payload / "web/settings.cgi")
+            (payload / "web/settings.cgi").chmod(0o755)
             info = (ROOT / arch / ("INFO-" + dsm)).read_text()
             info, count = re.subn(r'^version="[^"]*"$', 'version="' + package_version + '"', info, flags=re.M)
             if count != 1:
@@ -99,6 +111,7 @@ def main():
             "client_version": version, "package_version": package_version,
             "package_source": git_state(ROOT), "client_source": git_state(ROOT.parent / "ddns-client"),
             "binaries": {arch: {"path": str(path), "sha256": sha256(path)} for arch, path in binaries.items()},
+            "settings_cgi": {arch: {"sha256": sha256(path)} for arch, path in helpers.items()},
             "artifacts": {path.name: sha256(path) for path in artifacts},
         }, indent=2) + "\n")
         sums = staging / ("SHA256SUMS" if not args.package else args.package + "-" + args.dsm + ".sha256")
@@ -111,5 +124,5 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except (OSError, ValueError, tarfile.TarError) as error:
+    except (OSError, ValueError, tarfile.TarError, subprocess.CalledProcessError) as error:
         raise SystemExit("Packaging failed: " + str(error))

@@ -46,12 +46,13 @@ class Lifecycle(unittest.TestCase):
     @unittest.skipUnless(shutil.which("cc"), "C compiler required for process fixture")
     def test_start_status_stop_and_failed_start(self):
         source = self.root / "fixture.c"
-        source.write_text("#include <unistd.h>\nint main(void) { for (;;) pause(); }\n")
+        source.write_text('#include <unistd.h>\n#include <stdio.h>\nint main(int n, char **a) { for(int i=1;i<n;i++) puts(a[i]); fflush(stdout); for (;;) pause(); }\n')
         binary = self.target / "bin/ddnsto"
         subprocess.run(["cc", str(source), "-o", str(binary)], check=True)
         self.assertEqual(self.call("start-stop-status", "status").returncode, 3)
         try:
             self.assertEqual(self.call("start-stop-status", "start").returncode, 0)
+            self.assertIn("--log-path\n" + str(self.data / "logs"), (self.data / "ddnsto.log").read_text())
             self.assertEqual(self.call("start-stop-status", "status").returncode, 0)
             self.assertEqual(self.call("start-stop-status", "start").returncode, 0)
         finally:

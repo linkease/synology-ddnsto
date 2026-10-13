@@ -1,0 +1,29 @@
+#!/bin/sh
+# Read-only report. Never print configuration, cookies, environment or raw logs.
+set -u
+ROOT=/var/packages/ddnsto
+if [ -d "$ROOT/var" ]; then
+    SYNOPKG_PKGVAR="$ROOT/var"
+else
+    SYNOPKG_PKGVAR="$ROOT/etc"
+fi
+export SYNOPKG_PKGVAR
+printf 'System: '
+uname -srm
+if [ -f /etc.defaults/VERSION ]; then
+    sed -n '/^majorversion=/p; /^minorversion=/p; /^buildnumber=/p' /etc.defaults/VERSION
+fi
+printf '\nPackage / desktop entry permissions:\n'
+for path in "$ROOT/target" "$ROOT/target/web" "$ROOT/target/web/settings.cgi" /usr/syno/synoman/webman/3rdparty/ddnsto; do
+    ls -ld "$path" 2>&1
+done
+printf '\nInstalled package version:\n'
+sed -n '/^version=/p; /^dsmuidir=/p; /^dsmappname=/p' "$ROOT/INFO"
+printf '\nService status (0=running, 3=stopped):\n'
+sh "$ROOT/scripts/start-stop-status" status
+printf '%s\n' "$?"
+printf '\nLog files (content omitted):\n'
+for dir in "$ROOT/var" "$ROOT/etc"; do
+    [ -d "$dir" ] || continue
+    ls -ld "$dir" "$dir/ddnsto.log" "$dir/logs/ddnstoshell.log" 2>&1
+done

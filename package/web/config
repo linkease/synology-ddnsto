@@ -2,11 +2,11 @@
     ".url": {
         "com.App.ddnsto": {
             "title": "Ddnsto",
-            "desc": "Ddnsto 控制台",
+            "desc": "DDNSTO 设备设置",
             "type": "url",
             "icon": "images/icon_{0}.png",
-            "url": "https://www.kooldns.cn",
-            "allUsers": true
+            "url": "/webman/3rdparty/ddnsto/index.html",
+            "allUsers": false
         }
     }
 }

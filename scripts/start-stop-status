@@ -22,7 +22,10 @@ case "${1:-}" in
         mkdir -p "$DATA"
         chmod 700 "$DATA"
         cd "$TARGET/bin"
-        "$BINARY" </dev/null >>"$LOGFILE" 2>&1 &
+        mkdir -p "$DATA/logs"
+        chmod 700 "$DATA/logs"
+        printf "\nDDNSTO start: %s\n" "$(date)" >>"$LOGFILE"
+        "$BINARY" --log-path "$DATA/logs" </dev/null >>"$LOGFILE" 2>&1 &
         echo "$!" > "$PIDFILE"
         sleep 1
         if ! running; then

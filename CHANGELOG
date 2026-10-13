@@ -1,3 +1,21 @@
+4.2.7-4
+- DSM 静态入口从同源主窗口携带 SynoToken，修复启用 CSRF 时打开设置页的 403。
+- 修复排障脚本在 DSM 7 误查 etc 目录导致运行状态显示停止。
+
+4.2.7-3
+- 修正设置页绝对路径，控制台统一使用 web.ddnsto.com。
+- 设置页显示进程状态、服务端连接、设备 ID、版本和有界脱敏日志。
+- 连接日志写入套件持久目录，增加只读设备排障脚本。
+
+4.2.7-2
+--------
+- Add a local DSM administrator settings page for viewing and editing Token and device index.
+- Replace the desktop website shortcut with an authenticated, package-user CGI.
+- Save private configuration atomically; restart only running clients, with rollback on failure.
+- Reject unauthorized, forged and stale submissions; keep Token out of URLs and response caches.
+- Embed the settings page in ARM/amd64 CGI binaries and verify both in each SPK.
+- DSM authentication and CGI privilege integration still require device qualification.
+
 4.2.7-1
 --------
 - Package the Go DDNSTO 4.2.7 client for ARM and amd64, DSM 6 and DSM 7.

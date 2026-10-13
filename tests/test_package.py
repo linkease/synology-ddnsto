@@ -1,5 +1,6 @@
 import hashlib
 import io
+import json
 import os
 from pathlib import Path
 import shutil
@@ -58,11 +59,22 @@ class Packaging(unittest.TestCase):
         for package in packages:
             with tarfile.open(package) as outer:
                 info = outer.extractfile("INFO").read()
-                self.assertIn(b'version="4.2.7-1"', info)
+                self.assertIn(b'version="4.2.7-4"', info)
                 with tarfile.open(fileobj=io.BytesIO(outer.extractfile("package.tgz").read()), mode="r:gz") as inner:
                     arch = "arm" if "_arm-" in package.name else "amd64"
                     self.assertEqual(inner.extractfile("bin/ddnsto").read(), (self.inputs / ("synology." + arch)).read_bytes())
                     self.assertEqual(inner.getmember("bin/ddnsto").mode, 0o755)
+                    self.assertIn("web/settings.cgi", inner.getnames())
+                    helper = inner.extractfile("web/settings.cgi").read()
+                    self.assertEqual(helper[:4], b"\x7fELF")
+                    self.assertEqual(int.from_bytes(helper[18:20], "little"), 40 if arch == "arm" else 62)
+                    config = json.loads(inner.extractfile("web/config").read())[".url"]["com.App.ddnsto"]
+                    self.assertEqual(config["url"], "/webman/3rdparty/ddnsto/index.html")
+                    self.assertFalse(config["allUsers"])
+                    self.assertIn("web/launch.js", inner.getnames())
+                    self.assertIn("web/index.html", inner.getnames())
+                privilege = json.loads(outer.extractfile("conf/privilege").read())
+                self.assertIn({"relpath": "web/settings.cgi", "user": "package", "group": "package", "permission": "4755"}, privilege["tool"])
         self.assertEqual((self.repo / "arm/INFO-dsm6").read_bytes(), original)
         sums = next((self.root / "out").rglob("SHA256SUMS")).read_text()
         for package in packages:
